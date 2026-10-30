@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#26306e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="OS Campo">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>OS de Campo · Cogera</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icone-192.png">
+<link rel="apple-touch-icon" href="icone-180.png">
+<link rel="stylesheet" href="comum.css">
+<style>
+body { font-size: 17px; }
+.top .wrap { min-height: 58px; }
+.voltar { color: #fff; text-decoration: none; font-size: 26px; line-height: 1; padding: 6px 10px 6px 0; margin-left: -4px; }
+.tit { min-width: 0; flex: 1; }
+.tit b { display: block; font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tit span { display: block; font-size: 13px; opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aviso { position: sticky; top: calc(58px + env(safe-area-inset-top, 0)); z-index: 19; padding: 8px 16px; font-size: 14px; font-weight: 600; text-align: center; }
+.aviso.off { background: #fcefd6; color: #7a4800; }
+.aviso.env { background: #e2eafb; color: #22489c; }
+main { padding: 14px 0 calc(110px + env(safe-area-inset-bottom, 0)); }
+.wrap { max-width: 640px; }
+.ola { font-size: 15px; color: var(--ink-2); margin: 4px 0 12px; }
+.os-card { display: block; padding: 16px; margin-bottom: 12px; text-decoration: none; color: inherit; }
+.os-card .n { font-family: var(--mono); font-weight: 700; color: var(--navy); font-size: 15px; }
+.os-card .t { font-weight: 700; font-size: 18px; margin: 2px 0; }
+.os-card .bar { margin-top: 10px; height: 8px; }
+.os-card .rod { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font-size: 14px; color: var(--ink-2); }
+.grupo { font-size: 13px; font-weight: 700; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; margin: 22px 2px 8px; }
+.local-tit { font-size: 15px; font-weight: 800; color: var(--navy); letter-spacing: .04em; text-transform: uppercase; margin: 20px 2px 8px; }
+.etp { display: flex; align-items: center; gap: 12px; padding: 16px; text-decoration: none; color: inherit; border-bottom: 1px solid var(--line); background: var(--surface); }
+.etp:first-child { border-radius: var(--r) var(--r) 0 0; }
+.etp:last-child { border-bottom: 0; border-radius: 0 0 var(--r) var(--r); }
+.etp:only-child { border-radius: var(--r); }
+.etp .nm { flex: 1; font-weight: 600; font-size: 17px; }
+.etp .ct { font-family: var(--mono); font-size: 15px; color: var(--ink-2); }
+.dot { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--line-2); flex: none; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 15px; font-weight: 800; }
+.dot.meio { border-color: var(--green); background: conic-gradient(var(--green) var(--p), transparent 0); }
+.dot.ok { background: var(--green); border-color: var(--green); }
+.dot.nok { background: var(--fail); border-color: var(--fail); }
+.lista-etp { border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); }
+.it { padding: 14px; margin-bottom: 10px; }
+.it-nome { font-weight: 700; font-size: 18px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.tag { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--warn-bg); color: var(--warn); }
+.it-bot { display: grid; grid-template-columns: 1fr 1fr 64px; gap: 8px; margin-top: 10px; }
+.it-bot button { min-height: 52px; border-radius: 10px; border: 2px solid var(--line-2); background: var(--surface); font-weight: 700; font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.b-ok.on { background: var(--ok); border-color: var(--ok); color: #fff; }
+.b-nok.on { background: var(--fail); border-color: var(--fail); color: #fff; }
+.b-cam { position: relative; }
+.b-cam .q { position: absolute; top: -8px; right: -8px; background: var(--navy); color: #fff; font-size: 12px; min-width: 22px; height: 22px; border-radius: 11px; display: flex; align-items: center; justify-content: center; padding: 0 5px; }
+.b-cam.falta { border-color: var(--warn); }
+.fotos { display: flex; gap: 8px; margin-top: 10px; overflow-x: auto; padding-bottom: 2px; }
+.fotos button { flex: none; width: 68px; height: 68px; padding: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface-3); position: relative; cursor: pointer; }
+.fotos img { width: 100%; height: 100%; object-fit: cover; }
+.fotos .pend::after { content: "⏳"; position: absolute; right: 2px; bottom: 2px; font-size: 13px; background: rgba(255,255,255,.85); border-radius: 6px; padding: 0 2px; }
+.fotos .gal { font-size: 12px; font-weight: 600; color: var(--navy); background: var(--surface-2); border-style: dashed; }
+.valor { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
+.valor input { max-width: 180px; font-family: var(--mono); font-size: 18px; }
+.obs { margin-top: 10px; }
+.obs textarea { min-height: 64px; font-size: 16px; }
+.lnk-obs { background: none; border: 0; color: var(--navy); font-weight: 600; padding: 10px 0 0; cursor: pointer; font-size: 15px; }
+.rodape { position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0)); z-index: 15; }
+.rodape .wrap { display: flex; gap: 10px; padding: 0; }
+.rodape .btn { flex: 1; min-height: 52px; font-size: 16px; }
+.quem { display: block; width: 100%; text-align: left; padding: 18px 16px; font-size: 18px; font-weight: 700; margin-bottom: 10px; cursor: pointer; }
+.visor { position: fixed; inset: 0; background: #000; z-index: 90; display: flex; flex-direction: column; }
+.visor img { flex: 1; object-fit: contain; min-height: 0; width: 100%; }
+.visor .acoes { display: flex; gap: 10px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0)); }
+.visor .btn { flex: 1; min-height: 52px; }
+.concl { background: var(--ok-bg); color: var(--ok); border: 1px solid var(--ok-line); border-radius: var(--r); padding: 12px 14px; font-weight: 600; margin-top: 14px; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap" id="topo"><span class="brand"><span class="brand-dot"></span>cogera <small>OS de campo</small></span></div></header>
+<div id="aviso" class="aviso" hidden></div>
+<main><div class="wrap" id="app"><div class="empty">Carregando…</div></div></main>
+<div id="rodape" class="rodape" hidden><div class="wrap" id="rodape-in"></div></div>
+<input type="file" id="cam" accept="image/*" capture="environment" hidden>
+<input type="file" id="gal" accept="image/*" multiple hidden>
+<div id="toast" class="toast" hidden role="status" aria-live="polite"></div>
+<script src="config.js"></script>
+<script src="comum.js"></script>
+<script>
+'use strict';
+const ICO = {
+  ok: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  nok: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  cam: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2.6l1.6-2.2h6.6L16.9 7h2.6A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="12.8" r="3.6"/></svg>',
+};
+
+/* ---------- estado (fica guardado no celular) ---------- */
+const T = {
+  tec: lsGet('osc.tec', null),
+  dados: lsGet('osc.cache', null),
+  ops: lsGet('osc.ops', []),
+  fotosPend: [],
+  online: true, enviando: false, denovo: false, obsAbertas: new Set(), timer: null,
+};
+/* chave de acesso: vem no link enviado pelo escritório (?k=...) e fica guardada */
+(() => { const k = new URLSearchParams(location.search).get('k'); if (k) lsSet('osc.k', k); CHAVE = k || lsGet('osc.k', '') || ''; })();
+const salvarOps = () => lsSet('osc.ops', T.ops);
+const salvarCache = () => lsSet('osc.cache', T.dados);
+
+/* ---------- fotos pendentes (IndexedDB) ---------- */
+let _idb;
+function idb() {
+  if (_idb) return _idb;
+  _idb = new Promise((ok, falha) => { const r = indexedDB.open('osc-fotos', 2); r.onupgradeneeded = () => { const db = r.result; if (!db.objectStoreNames.contains('fila')) db.createObjectStore('fila', { keyPath: 'id' }); if (!db.objectStoreNames.contains('cache')) db.createObjectStore('cache', { keyPath: 'id' }); }; r.onsuccess = () => ok(r.result); r.onerror = () => falha(r.error); });
+  return _idb;
+}
+async function idbOp(modo, fn, area) { const db = await idb(); area = area || 'fila'; return new Promise((ok, falha) => { const tx = db.transaction(area, modo); const st = tx.objectStore(area); const r = fn(st); tx.oncomplete = () => ok(r && r.result); tx.onerror = () => falha(tx.error); }); }
+async function carregarFotosPend() {
+  try { const lst = await idbOp('readonly', st => st.getAll()); T.fotosPend = (lst || []).map(f => ({ id: f.id, osId: f.osId, itemId: f.itemId, em: f.em, por: f.por, url: URL.createObjectURL(f.blob) })); } catch (e) { T.fotosPend = []; }
+  try { const lst = await idbOp('readonly', st => st.getAll(), 'cache'); (lst || []).forEach(f => registrarFoto(f.id, f.blob)); } catch (e) { }
+}
+/* guarda no celular as fotos já enviadas ou baixadas, para ver sem sinal */
+function guardarFoto(id, blob) { const f = D().fotos.find(x => x.id === id); idbOp('readwrite', st => st.put({ id, osId: f ? f.osId : '', blob }), 'cache').catch(() => { }); }
+async function limparCache() {
+  try { const ids = new Set(D().os.map(o => o.id)); const lst = await idbOp('readonly', st => st.getAll(), 'cache'); for (const f of lst || []) if (f.osId && !ids.has(f.osId)) await idbOp('readwrite', st => st.delete(f.id), 'cache'); } catch (e) { }
+}
+
+/* ---------- leitura com as alterações locais por cima ---------- */
+const D = () => T.dados || { tecnicos: [], os: [], respostas: [], fotos: [] };
+const osPorId = id => D().os.find(o => o.id === id);
+function resposta(osId, itemId) {
+  const base = D().respostas.find(r => r.id === osId + '~' + itemId);
+  const r = base ? Object.assign({}, base) : {};
+  for (const op of T.ops) if (op.tipo === 'resp' && op.osId === osId && op.itemId === itemId) for (const k of ['status', 'obs', 'valor']) if (k in op) r[k] = op[k];
+  return r;
+}
+function fotosDo(osId, itemId) {
+  const apagadas = new Set(T.ops.filter(o => o.tipo === 'delfoto').map(o => o.id));
+  const srv = D().fotos.filter(f => f.osId === osId && f.itemId === itemId && !apagadas.has(f.id)).map(f => ({ id: f.id, url: FOTOS.get(f.id) || '', em: f.em }));
+  const ids = new Set(srv.map(f => f.id));
+  const loc = T.fotosPend.filter(f => f.osId === osId && f.itemId === itemId && !ids.has(f.id)).map(f => ({ id: f.id, url: f.url, em: f.em, pend: true }));
+  return srv.concat(loc).sort((a, b) => String(a.em).localeCompare(String(b.em)));
+}
+function statusOS(os) {
+  let st = os.status;
+  for (const op of T.ops) if (op.osId === os.id && (op.tipo === 'concluir' || op.tipo === 'reabrir')) st = op.tipo === 'concluir' ? 'concluida' : 'aberta';
+  return st;
+}
+const nPend = () => T.ops.length + T.fotosPend.length;
+
+/* ---------- servidor ---------- */
+async function atualizar() {
+  const d = await apiGet('tudo', T.tec ? { tecnico: T.tec.id } : {});
+  T.dados = { tecnicos: d.tecnicos, os: T.tec ? d.os : [], respostas: T.tec ? d.respostas : [], fotos: T.tec ? d.fotos : [], versao: d.versao, em: new Date().toISOString() };
+  salvarCache();
+  if (T.tec) { const eu = d.tecnicos.find(t => t.id === T.tec.id); if (eu && eu.nome !== T.tec.nome) { T.tec.nome = eu.nome; lsSet('osc.tec', T.tec); } }
+}
+async function enviarOp(op) {
+  if (op.tipo === 'resp') { const c = { em: op.em, por: op.por }; for (const k of ['status', 'obs', 'valor']) if (k in op) c[k] = op[k]; c.osId = op.osId; c.itemId = op.itemId; return apiPost('resposta', c); }
+  if (op.tipo === 'concluir' || op.tipo === 'reabrir') return apiPost(op.tipo, { osId: op.osId, em: op.em, por: op.por });
+  if (op.tipo === 'delfoto') return apiPost('apagarFoto', { id: op.id });
+}
+async function enviarFoto(f) {
+  const reg = await idbOp('readonly', st => st.get(f.id));
+  if (!reg) return null;
+  const doc = await apiPost('foto', { id: f.id, osId: f.osId, itemId: f.itemId, por: f.por || '', em: f.em || '', b64: await blobParaB64(reg.blob) });
+  registrarFoto(f.id, reg.blob);
+  await idbOp('readwrite', st => st.put({ id: f.id, osId: f.osId, blob: reg.blob }), 'cache').catch(() => { });
+  return doc;
+}
+async function sincronizar() {
+  if (T.enviando) { T.denovo = true; return; }
+  T.enviando = true; mostrarAviso();
+  try {
+    while (T.ops.length) {
+      const op = T.ops[0];
+      try { await enviarOp(op); } catch (e) { if (e instanceof ErroRede || e.status === 403 || e.status >= 500) throw e; console.warn('alteração descartada', op, e.message); }
+      T.ops.shift(); salvarOps(); mostrarAviso();
+    }
+    for (const f of T.fotosPend.slice()) {
+      try { const doc = await enviarFoto(f); if (doc && T.dados) T.dados.fotos.push(doc); }
+      catch (e) { if (e instanceof ErroRede || e.status === 403 || e.status >= 500) throw e; toast('Uma foto não foi aceita pelo servidor: ' + e.message, 5000); }
+      await idbOp('readwrite', st => st.delete(f.id));
+      T.fotosPend = T.fotosPend.filter(x => x.id !== f.id); mostrarAviso();
+    }
+    await atualizar();
+    T.online = true; T.semAcesso = false;
+    limparCache();
+  } catch (e) { if (e instanceof ErroRede) T.online = false; else if (e.status === 403) T.semAcesso = true; else console.warn(e); }
+  T.enviando = false;
+  if (T.denovo) { T.denovo = false; return sincronizar(); }
+  render();
+  clearTimeout(T.timer);
+  if (nPend() || !T.online) T.timer = setTimeout(sincronizar, T.online ? 8000 : 15000);
+}
+function mostrarAviso() {
+  const a = document.getElementById('aviso'); const n = nPend();
+  if (!T.online) { a.hidden = false; a.className = 'aviso off'; a.textContent = n ? `Sem conexão · ${n} pendente${n > 1 ? 's' : ''}. Tudo fica salvo no celular.` : 'Sem conexão. Você pode continuar; tudo fica salvo no celular.'; }
+  else if (n) { a.hidden = false; a.className = 'aviso env'; a.textContent = `Enviando ${n} alteraç${n > 1 ? 'ões' : 'ão'}…`; }
+  else a.hidden = true;
+}
+
+/* ---------- ações do técnico ---------- */
+function registrar(op) {
+  op.em = new Date().toISOString(); op.por = T.tec ? T.tec.nome : '';
+  // junta com a última alteração do mesmo item, se ainda não saiu
+  const ult = T.ops[T.ops.length - 1];
+  if (op.tipo === 'resp' && ult && ult.tipo === 'resp' && ult.osId === op.osId && ult.itemId === op.itemId && !T.enviando) Object.assign(ult, op);
+  else T.ops.push(op);
+  salvarOps(); render(); sincronizar();
+}
+async function comprimir(file) {
+  let img;
+  try { img = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+  catch (e) { img = await new Promise((ok, falha) => { const i = new Image(); i.onload = () => ok(i); i.onerror = falha; i.src = URL.createObjectURL(file); }); }
+  const w0 = img.width || img.naturalWidth, h0 = img.height || img.naturalHeight;
+  const k = Math.min(1, 1600 / Math.max(w0, h0));
+  const c = document.createElement('canvas'); c.width = Math.round(w0 * k); c.height = Math.round(h0 * k);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  return new Promise(ok => c.toBlob(ok, 'image/jpeg', 0.82));
+}
+let alvoFoto = null;
+async function receberFotos(files) {
+  if (!alvoFoto || !files || !files.length) return;
+  const { osId, itemId } = alvoFoto;
+  for (const file of files) {
+    try {
+      const blob = await comprimir(file);
+      const reg = { id: uid(), osId, itemId, em: new Date().toISOString(), por: T.tec ? T.tec.nome : '', blob };
+      await idbOp('readwrite', st => st.put(reg));
+      T.fotosPend.push({ id: reg.id, osId, itemId, em: reg.em, por: reg.por, url: URL.createObjectURL(blob) });
+    } catch (e) { toast('Não foi possível guardar a foto: ' + (e.message || e), 5000); }
+  }
+  render(); sincronizar();
+}
+document.getElementById('cam').addEventListener('change', e => { receberFotos(e.target.files); e.target.value = ''; });
+document.getElementById('gal').addEventListener('change', e => { receberFotos(e.target.files); e.target.value = ''; });
+
+/* ---------- telas ---------- */
+function rota() { const h = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean); return { osId: h[0] === 'os' ? h[1] : '', lid: h[2] || '', eid: h[3] || '' }; }
+window.addEventListener('hashchange', () => { window.scrollTo(0, 0); render(); });
+const app = document.getElementById('app');
+
+function topo(voltar, titulo, sub) {
+  document.getElementById('topo').innerHTML = voltar
+    ? `<a class="voltar" href="${voltar}" aria-label="Voltar">‹</a><div class="tit"><b>${esc(titulo)}</b>${sub ? `<span>${esc(sub)}</span>` : ''}</div>`
+    : `<span class="brand"><span class="brand-dot"></span>cogera <small>OS de campo</small></span>`;
+}
+function rodape(html) { const r = document.getElementById('rodape'); r.hidden = !html; document.getElementById('rodape-in').innerHTML = html || ''; }
+
+function render() {
+  mostrarAviso();
+  if (!API_OK) { topo(); rodape(''); return pintar(app, TELA_SEM_CONFIG); }
+  if (!CHAVE || T.semAcesso) { topo(); rodape(''); return pintar(app, `<div class="card empty" style="margin-top:20px"><b>Abra o app pelo link enviado pelo escritório.</b><br>${T.semAcesso ? 'O link guardado neste celular não vale mais. Peça o link novo.' : 'Esse link já traz o acesso. Depois é só adicionar à tela inicial.'}</div>`); }
+  if (!T.tec) return telaQuem();
+  const r = rota();
+  if (r.osId && r.eid) return telaEtapa(r.osId, r.lid, r.eid);
+  if (r.osId) return telaOS(r.osId);
+  telaLista();
+}
+
+function telaQuem() {
+  topo(); rodape('');
+  const ts = D().tecnicos.filter(t => t.ativo !== false).sort((a, b) => String(a.nome).localeCompare(String(b.nome), 'pt-BR'));
+  pintar(app, `<h1 style="font-size:22px;margin:8px 0 4px">Quem é você?</h1><p class="muted" style="margin:0 0 16px">Toque no seu nome. O celular vai lembrar da próxima vez.</p>
+    ${ts.length ? ts.map(t => `<button class="card quem" data-a="sou" data-id="${t.id}">${esc(t.nome)}</button>`).join('') : `<div class="card empty">${T.dados ? 'Nenhum técnico cadastrado ainda. Peça ao escritório para cadastrar seu nome na matriz.' : 'Sem conexão com a internet. Tente de novo quando tiver sinal.'}<div style="margin-top:14px"><button class="btn btn-p" data-a="tentar">Tentar de novo</button></div></div>`}`);
+}
+
+function progresso(os) { return contarOS(os, id => resposta(os.id, id)); }
+function telaLista() {
+  topo(); rodape('');
+  const lista = D().os.slice().sort((a, b) => String(a.data || '').localeCompare(String(b.data || '')) || String(a.numero).localeCompare(String(b.numero), 'pt-BR', { numeric: true }));
+  const abertas = lista.filter(o => statusOS(o) !== 'concluida'), feitas = lista.filter(o => statusOS(o) === 'concluida').reverse().slice(0, 10);
+  const card = o => { const c = progresso(o); const conc = statusOS(o) === 'concluida';
+    return `<a class="card os-card" href="#/os/${o.id}"><div class="n">OS ${esc(o.numero)}</div><div class="t">${esc(o.titulo || 'Sem título')}</div>${o.cliente ? `<div class="muted small">${esc(o.cliente)}</div>` : ''}
+      <div class="bar"><i style="width:${c.tot ? c.ok / c.tot * 100 : 0}%"></i><i class="n" style="width:${c.tot ? c.nok / c.tot * 100 : 0}%"></i></div>
+      <div class="rod"><span>${o.data ? esc(dataBR(o.data)) : ''}</span><span>${conc ? '<span class="chip ok">Concluída</span>' : `<b class="mono">${c.feitos} de ${c.tot}</b> feitos`}</span></div></a>`; };
+  pintar(app, `<p class="ola">Olá, <b>${esc(T.tec.nome)}</b></p>
+    ${abertas.length ? abertas.map(card).join('') : `<div class="card empty">Nenhuma OS aberta para você agora.${T.dados ? '' : '<br>Conecte à internet para baixar suas OS.'}</div>`}
+    ${feitas.length ? `<div class="grupo">Concluídas</div>${feitas.map(card).join('')}` : ''}
+    <p style="text-align:center;margin-top:28px"><button class="btn-txt btn" data-a="trocar">Não é você? Trocar técnico</button></p>`);
+}
+
+function telaOS(osId) {
+  const os = osPorId(osId);
+  if (!os) { topo('#/', 'OS não encontrada'); rodape(''); return pintar(app, '<div class="card empty">Esta OS não está mais com você. Volte para a lista.</div>'); }
+  topo('#/', `OS ${os.numero}`, os.titulo);
+  const conc = statusOS(os) === 'concluida';
+  pintar(app, `${(os.locais || []).map(l => `<div class="local-tit">${esc(l.nome)}</div><div class="lista-etp">${(l.etapas || []).map(e => {
+      const itens = e.itens || []; let f = 0, n = 0;
+      itens.forEach(it => { const r = resposta(os.id, it.id); if (r.status) f++; if (r.status === 'nok') n++; });
+      const cls = itens.length && f === itens.length ? (n ? 'nok' : 'ok') : f ? 'meio' : '';
+      return `<a class="etp" href="#/os/${os.id}/${l.id}/${e.id}"><span class="dot ${cls}" style="--p:${itens.length ? f / itens.length * 100 : 0}%">${cls === 'ok' ? '✓' : cls === 'nok' ? '!' : ''}</span><span class="nm">${esc(e.nome || 'Etapa')}</span><span class="ct">${f}/${itens.length}</span><span class="faint" aria-hidden="true">›</span></a>`;
+    }).join('') || '<div class="etp muted">Sem etapas</div>'}</div>`).join('') || '<div class="card empty">Esta OS ainda não tem locais. Fale com o escritório.</div>'}
+    ${conc ? `<div class="concl">✓ OS concluída. Se precisar corrigir algo, pode continuar editando.</div>` : ''}`);
+  rodape(conc ? `<button class="btn" data-a="reabrir" data-os="${os.id}">Reabrir OS</button>` : `<button class="btn btn-g" data-a="finalizar" data-os="${os.id}">Finalizar OS</button>`);
+}
+
+function acharEtapa(os, lid, eid) { const l = (os.locais || []).find(x => x.id === lid); const e = l && (l.etapas || []).find(x => x.id === eid); return { l, e }; }
+function telaEtapa(osId, lid, eid) {
+  const os = osPorId(osId); const { l, e } = os ? acharEtapa(os, lid, eid) : {};
+  if (!e) { topo('#/os/' + osId, 'Etapa não encontrada'); rodape(''); return pintar(app, '<div class="card empty">Esta etapa mudou no escritório. Volte para a OS.</div>'); }
+  topo('#/os/' + osId, e.nome || 'Etapa', `${l.nome} · OS ${os.numero}`);
+  const itens = e.itens || [];
+  pintar(app, itens.map(it => {
+    const r = resposta(os.id, it.id); const fs = fotosDo(os.id, it.id);
+    const abreObs = r.status === 'nok' || r.obs || T.obsAbertas.has(it.id);
+    return `<div class="card it" data-iid="${it.id}">
+      <div class="it-nome">${esc(it.nome)}${it.fotoObrig ? '<span class="tag">foto obrigatória</span>' : ''}</div>
+      <div class="it-bot">
+        <button class="b-ok ${r.status === 'ok' ? 'on' : ''}" data-a="st" data-v="ok" aria-pressed="${r.status === 'ok'}">${ICO.ok} OK</button>
+        <button class="b-nok ${r.status === 'nok' ? 'on' : ''}" data-a="st" data-v="nok" aria-pressed="${r.status === 'nok'}">${ICO.nok} Não OK</button>
+        <button class="b-cam ${it.fotoObrig && !fs.length ? 'falta' : ''}" data-a="cam" aria-label="Tirar foto">${ICO.cam}${fs.length ? `<span class="q">${fs.length}</span>` : ''}</button>
+      </div>
+      ${it.unid ? `<div class="valor"><input type="text" inputmode="decimal" data-f="${it.id}-v" data-k="valor" value="${esc(r.valor != null ? String(r.valor).replace('.', ',') : '')}" placeholder="Valor"><b>${esc(it.unid)}</b></div>` : ''}
+      ${fs.length ? `<div class="fotos">${fs.map(f => `<button class="${f.pend ? 'pend' : ''}" data-a="ver" data-id="${f.id}" data-pend="${f.pend ? 1 : ''}" aria-label="Ver foto">${f.pend ? `<img src="${esc(f.url)}" alt="">` : `<img data-foto="${f.id}" ${f.url ? `src="${esc(f.url)}"` : ''} alt="">`}</button>`).join('')}<button class="gal" data-a="gal">+ da galeria</button></div>` : ''}
+      ${abreObs ? `<div class="obs"><textarea data-f="${it.id}-o" data-k="obs" placeholder="${r.status === 'nok' ? 'O que foi encontrado?' : 'Observação'}">${esc(r.obs || '')}</textarea></div>` : `<button class="lnk-obs" data-a="obs">+ observação</button>`}
+    </div>`;
+  }).join('') || '<div class="card empty">Nenhum item nesta etapa.</div>');
+  if (T.online) hidratarFotos(app, guardarFoto);
+  // próxima etapa
+  const seq = []; (os.locais || []).forEach(L => (L.etapas || []).forEach(E => seq.push([L.id, E.id])));
+  const i = seq.findIndex(([a, b]) => a === lid && b === eid); const prox = seq[i + 1];
+  const faltam = itens.filter(it => !resposta(os.id, it.id).status).length;
+  rodape(`${faltam ? `<button class="btn" data-a="todos-ok">Restantes OK (${faltam})</button>` : ''}${prox ? `<a class="btn btn-p" href="#/os/${os.id}/${prox[0]}/${prox[1]}">Próxima etapa ›</a>` : `<a class="btn btn-p" href="#/os/${os.id}">Voltar à OS</a>`}`);
+}
+
+/* ---------- toques ---------- */
+document.body.addEventListener('click', async ev => {
+  const b = ev.target.closest('[data-a]'); if (!b) return;
+  const r = rota(); const iid = (b.closest('[data-iid]') || {}).dataset ? b.closest('[data-iid]') && b.closest('[data-iid]').dataset.iid : null;
+  switch (b.dataset.a) {
+    case 'sou': { const t = D().tecnicos.find(x => x.id === b.dataset.id); if (!t) return; T.tec = { id: t.id, nome: t.nome }; lsSet('osc.tec', T.tec); render(); sincronizar(); break; }
+    case 'tentar': sincronizar(); break;
+    case 'trocar': if (nPend()) { toast('Espere enviar as alterações pendentes antes de trocar de técnico.', 4000); break; }
+      if (await perguntar('Trocar de técnico?', 'O celular vai mostrar a lista de nomes de novo.', [{ txt: 'Cancelar', v: false }, { txt: 'Trocar', v: true, cls: 'btn-p' }])) { T.tec = null; lsSet('osc.tec', null); T.dados = Object.assign({}, D(), { os: [], respostas: [], fotos: [] }); salvarCache(); location.hash = '#/'; render(); sincronizar(); }
+      break;
+    case 'st': { const atual = resposta(r.osId, iid).status; const v = atual === b.dataset.v ? null : b.dataset.v; if (v === 'nok') T.obsAbertas.add(iid); registrar({ tipo: 'resp', osId: r.osId, itemId: iid, status: v }); if (v === 'nok') setTimeout(() => { const t = document.querySelector(`[data-f="${iid}-o"]`); if (t && !t.value) t.focus(); }, 50); break; }
+    case 'cam': alvoFoto = { osId: r.osId, itemId: iid }; document.getElementById('cam').click(); break;
+    case 'gal': alvoFoto = { osId: r.osId, itemId: iid }; document.getElementById('gal').click(); break;
+    case 'obs': T.obsAbertas.add(iid); render(); setTimeout(() => { const t = document.querySelector(`[data-f="${iid}-o"]`); t && t.focus(); }, 30); break;
+    case 'ver': { const pf = T.fotosPend.find(f => f.id === b.dataset.id); verFoto(b.dataset.id, pf ? pf.url : (FOTOS.get(b.dataset.id) || ''), !!pf); break; }
+    case 'todos-ok': {
+      const os = osPorId(r.osId); const { e } = acharEtapa(os, r.lid, r.eid); const pend = (e.itens || []).filter(it => !resposta(os.id, it.id).status);
+      if (!pend.length) break;
+      if (!await perguntar(`Marcar ${pend.length} ${pend.length > 1 ? 'itens' : 'item'} como OK?`, esc(pend.map(i => i.nome).join(', ')), [{ txt: 'Cancelar', v: false }, { txt: 'Marcar OK', v: true, cls: 'btn-g' }])) break;
+      const em = new Date().toISOString(); pend.forEach(it => T.ops.push({ tipo: 'resp', osId: os.id, itemId: it.id, status: 'ok', em, por: T.tec.nome })); salvarOps(); render(); sincronizar(); break;
+    }
+    case 'finalizar': await finalizar(b.dataset.os); break;
+    case 'reabrir': registrar({ tipo: 'reabrir', osId: b.dataset.os }); toast('OS reaberta.'); break;
+  }
+});
+/* valor e observação: grava ao sair do campo e também durante a digitação (com espera) */
+const gravarCampo = debounce(el => campoMudou(el), 900);
+function campoMudou(el) {
+  const it = el.closest('[data-iid]'); if (!it) return; const r = rota(); const k = el.dataset.k;
+  let v = el.value; if (k === 'valor') { v = v.trim().replace(/\s/g, '').replace(',', '.'); v = v === '' ? null : (isNaN(+v) ? el.value.trim() : +v); }
+  const atual = resposta(r.osId, it.dataset.iid)[k]; if ((atual == null ? '' : String(atual)) === (v == null ? '' : String(v))) return;
+  registrar({ tipo: 'resp', osId: r.osId, itemId: it.dataset.iid, [k]: v });
+}
+app.addEventListener('input', e => { if (e.target.dataset.k) gravarCampo(e.target); });
+app.addEventListener('change', e => { if (e.target.dataset.k) campoMudou(e.target); });
+
+function verFoto(id, url, pend) {
+  const o = document.createElement('div'); o.className = 'visor';
+  o.innerHTML = `<img src="${esc(url)}" alt="Foto"><div class="acoes"><button class="btn btn-d" data-x="del">Excluir foto</button><button class="btn btn-p" data-x="fechar">Fechar</button></div>`;
+  o.addEventListener('click', async e => {
+    const x = e.target.closest('[data-x]'); if (!x) return;
+    if (x.dataset.x === 'fechar') return o.remove();
+    if (!await perguntar('Excluir esta foto?', '', [{ txt: 'Cancelar', v: false }, { txt: 'Excluir', v: true, cls: 'btn-d' }])) return;
+    o.remove();
+    if (pend) { await idbOp('readwrite', st => st.delete(id)); T.fotosPend = T.fotosPend.filter(f => f.id !== id); render(); }
+    else registrar({ tipo: 'delfoto', id });
+  });
+  document.body.appendChild(o);
+}
+
+async function finalizar(osId) {
+  const os = osPorId(osId); const sem = [], semFoto = [], semObs = [];
+  (os.locais || []).forEach(l => (l.etapas || []).forEach(e => (e.itens || []).forEach(it => {
+    const r = resposta(os.id, it.id); const nome = `${it.nome} (${e.nome})`;
+    if (!r.status) sem.push(nome);
+    if (it.fotoObrig && !fotosDo(os.id, it.id).length) semFoto.push(nome);
+    if (r.status === 'nok' && !(r.obs || '').trim()) semObs.push(nome);
+  })));
+  const lista = (t, a) => a.length ? `<p style="margin:10px 0 4px"><b>${t} (${a.length})</b></p><div class="small">${esc(a.slice(0, 8).join(' · '))}${a.length > 8 ? ' …' : ''}</div>` : '';
+  const tem = sem.length || semFoto.length || semObs.length;
+  const v = await perguntar(tem ? 'Ainda falta algo' : 'Finalizar a OS?', tem ? lista('Itens sem marcação', sem) + lista('Foto obrigatória faltando', semFoto) + lista('Não OK sem observação', semObs) : 'Tudo marcado. O escritório recebe a OS como concluída.', tem ? [{ txt: 'Finalizar assim mesmo', v: true }, { txt: 'Voltar e completar', v: false, cls: 'btn-p' }] : [{ txt: 'Cancelar', v: false }, { txt: 'Finalizar', v: true, cls: 'btn-g' }]);
+  if (!v) return;
+  registrar({ tipo: 'concluir', osId });
+  toast(T.online ? 'OS finalizada. Obrigado!' : 'OS finalizada. Será enviada quando a conexão voltar.', 4000);
+  location.hash = '#/';
+}
+
+/* ---------- início ---------- */
+(async () => {
+  await carregarFotosPend();
+  render();
+  await sincronizar();
+  /* confere novidades do escritório a cada 20 segundos */
+  setInterval(async () => {
+    if (document.hidden || !API_OK || !CHAVE || T.enviando) return;
+    try { const v = await apiGet('versao'); if (!T.online || !T.dados || v.versao !== T.dados.versao) sincronizar(); }
+    catch (e) { if (e instanceof ErroRede && T.online) { T.online = false; mostrarAviso(); } }
+  }, 20000);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => { });
+  window.addEventListener('online', () => sincronizar());
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) sincronizar(); });
+})();
+</script>
+</body>
+</html>

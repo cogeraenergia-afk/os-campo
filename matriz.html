@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#26306e">
+<title>Matriz · OS de Campo</title>
+<link rel="icon" href="icone-192.png">
+<link rel="stylesheet" href="comum.css">
+<style>
+nav.abas { display: flex; gap: 4px; margin-left: 12px; overflow-x: auto; }
+nav.abas a { color: #fff; opacity: .78; text-decoration: none; padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 15px; white-space: nowrap; }
+nav.abas a.on { opacity: 1; background: rgba(255,255,255,.14); }
+.status-con { margin-left: auto; font-size: 13px; display: flex; align-items: center; gap: 6px; opacity: .9; white-space: nowrap; }
+.status-con i { width: 8px; height: 8px; border-radius: 50%; background: #6ee39a; display: inline-block; }
+.status-con.off i { background: #ff8a80; }
+main { padding: 20px 0 80px; }
+h1 { font-size: 24px; margin: 0; letter-spacing: -.01em; }
+.barra { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+.barra .esp { flex: 1; }
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl th { text-align: left; font-size: 12.5px; font-weight: 600; color: var(--ink-2); padding: 10px 12px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.tbl td { padding: 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.tbl tr.lnk { cursor: pointer; }
+.tbl tr.lnk:hover td { background: var(--surface-2); }
+.prog { display: flex; align-items: center; gap: 8px; min-width: 130px; }
+.prog .bar { flex: 1; }
+.grid-os { display: grid; grid-template-columns: 140px 1fr 1fr 160px 150px; gap: 12px; }
+@media (max-width: 900px) { .grid-os { grid-template-columns: 1fr 1fr; } }
+.tecs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tec { border: 1px solid var(--line-2); background: var(--surface); border-radius: 999px; padding: 6px 12px; cursor: pointer; font-weight: 600; font-size: 14px; }
+.tec.on { background: var(--navy); color: #fff; border-color: var(--navy); }
+.local { margin-top: 18px; overflow: hidden; }
+.local-cab { display: flex; gap: 8px; align-items: center; padding: 12px 14px; background: var(--navy); color: #fff; flex-wrap: wrap; }
+.local-cab input { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.25); color: #fff; font-weight: 700; font-size: 17px; flex: 1; min-width: 200px; }
+.local-cab .btn-txt { color: #fff; }
+.local-cab .btn-txt:hover { background: rgba(255,255,255,.14); }
+.etapa { border-top: 1px solid var(--line); padding: 12px 14px 14px; }
+.etapa-cab { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.etapa-cab input { font-weight: 700; color: var(--green); flex: 1; min-width: 180px; }
+.etapa-cab .num { font-family: var(--mono); color: var(--ink-3); font-size: 13px; }
+.itens { width: 100%; border-collapse: collapse; }
+.itens td, .itens th { padding: 5px 6px; vertical-align: top; border-bottom: 1px solid var(--surface-3); }
+.itens th { font-size: 12px; color: var(--ink-3); font-weight: 600; text-align: left; }
+.itens input[type=text] { min-height: 38px; padding: 6px 10px; }
+.itens .c-foto { width: 74px; text-align: center; }
+.itens .c-uni { width: 100px; }
+.itens .c-acao { width: 110px; white-space: nowrap; text-align: right; }
+.itens .c-resp { width: 34%; }
+.resp { font-size: 13px; display: flex; flex-direction: column; gap: 4px; }
+.resp .obs { color: var(--ink-2); white-space: pre-wrap; }
+.thumbs { display: flex; gap: 4px; flex-wrap: wrap; }
+.thumbs img { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; cursor: zoom-in; border: 1px solid var(--line); }
+.novo-item { display: flex; gap: 8px; margin-top: 8px; }
+.novo-item textarea { min-height: 40px; height: 40px; padding: 8px 10px; }
+.add-local { margin-top: 18px; padding: 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; border-style: dashed; }
+.salvo { font-size: 13px; color: var(--ink-3); }
+.lupa { position: fixed; inset: 0; background: rgba(0,0,0,.88); z-index: 90; display: flex; align-items: center; justify-content: center; padding: 20px; cursor: zoom-out; }
+.lupa img { max-height: 100%; max-width: 100%; }
+.mod-card { padding: 14px 16px; display: flex; gap: 12px; align-items: center; margin-bottom: 10px; cursor: pointer; }
+.mod-card:hover { background: var(--surface-2); }
+.dica { background: #eef3ff; border: 1px solid #cdd9fb; border-radius: var(--r-sm); padding: 10px 14px; font-size: 14px; color: #2b3f86; margin-bottom: 14px; }
+@media (max-width: 700px) {
+  .itens .c-uni, .itens .c-foto { width: auto; }
+  .itens thead { display: none; }
+  .itens tr { display: grid; grid-template-columns: 1fr auto; gap: 4px; padding: 6px 0; border-bottom: 1px solid var(--surface-3); }
+  .itens td { border: 0; padding: 2px 0; }
+  .itens .c-resp { grid-column: 1 / -1; width: auto; }
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <span class="brand"><span class="brand-dot"></span>cogera <small>Matriz · OS de campo</small></span>
+  <nav class="abas" id="abas"></nav>
+  <span class="status-con" id="con"><i></i><span>conectado</span></span><button class="btn-txt btn btn-s" id="sair" style="color:#fff;margin-left:8px" title="Sair desta matriz neste computador">Sair</button>
+</div></header>
+<main><div class="wrap" id="app"><div class="empty">Carregando…</div></div></main>
+<div id="toast" class="toast" hidden role="status" aria-live="polite"></div>
+<script src="config.js"></script>
+<script src="comum.js"></script>
+<script src="relatorio.js"></script>
+<script>
+'use strict';
+const S = { dados: { tecnicos: [], modelos: [], os: [], respostas: [], fotos: [] }, carregado: false, filtro: lsGet('osc.m.filtro', 'abertas'), busca: '', sujos: new Map(), salvando: 0, online: true, menuLocal: false };
+const app = document.getElementById('app');
+
+/* ---------- dados ---------- */
+const docsDe = col => S.dados[col] || [];
+const porId = (col, id) => docsDe(col).find(d => d.id === id);
+const respDe = (osId, itemId) => docsDe('respostas').find(r => r.id === osId + '~' + itemId);
+const fotosDe = (osId, itemId) => docsDe('fotos').filter(f => f.osId === osId && f.itemId === itemId).sort((a, b) => String(a.em).localeCompare(String(b.em)));
+const nomeTec = id => (porId('tecnicos', id) || {}).nome || '—';
+
+async function carregar() {
+  if (!API_OK) { app.innerHTML = TELA_SEM_CONFIG; return; }
+  if (!CHAVE) return telaChave();
+  try {
+    const d = await apiGet('tudo');
+    S.versao = d.versao;
+    // documentos com edição ainda não gravada continuam com a versão local
+    for (const [chave, doc] of S.sujos) { const [col] = chave.split('/'); const arr = d[col]; const i = arr.findIndex(x => x.id === doc.id); if (i >= 0) arr[i] = doc; else arr.push(doc); }
+    S.dados = d; S.carregado = true; setOnline(true); render();
+  } catch (e) {
+    if (e.status === 403) { CHAVE = ''; lsSet('osc.m.k', ''); return telaChave('Chave incorreta. Confira e tente de novo.'); }
+    setOnline(false); if (!S.carregado) app.innerHTML = `<div class="empty">Não foi possível falar com o Google agora.<br><span class="small">${esc(e.message)}</span><div style="margin-top:14px"><button class="btn btn-p" onclick="carregar()">Tentar de novo</button></div></div>`;
+  }
+}
+/* primeira entrada: chave do escritório (fica guardada neste computador) */
+function telaChave(msg) {
+  document.getElementById('abas').innerHTML = '';
+  app.innerHTML = `<div class="card" style="max-width:440px;margin:40px auto;padding:22px"><h1 style="font-size:20px;margin:0 0 6px">Entrar na matriz</h1><p class="muted" style="margin:0 0 14px">Cole a <b>chave do escritório</b> (aparece no Apps Script, na função mostrarChaves). É pedida só uma vez neste computador.</p>${msg ? `<p style="color:var(--fail);margin:0 0 10px">${esc(msg)}</p>` : ''}<input type="text" id="chave" placeholder="Chave do escritório" autocomplete="off"><div style="margin-top:12px;text-align:right"><button class="btn btn-p" id="entrar">Entrar</button></div></div>`;
+  const ir = () => { const v = document.getElementById('chave').value.trim(); if (!v) return; CHAVE = v; lsSet('osc.m.k', v); app.innerHTML = '<div class="empty">Carregando…</div>'; carregar(); };
+  document.getElementById('entrar').onclick = ir; document.getElementById('chave').onkeydown = e => { if (e.key === 'Enter') ir(); };
+  document.getElementById('chave').focus();
+}
+function setOnline(v) { S.online = v; const c = document.getElementById('con'); c.classList.toggle('off', !v); c.lastElementChild.textContent = v ? (S.salvando ? 'salvando…' : 'conectado') : 'sem conexão'; }
+
+/* gravação com espera curta (digitação) */
+const timers = new Map();
+function salvar(col, doc, imediato) {
+  const chave = col + '/' + doc.id; S.sujos.set(chave, doc);
+  clearTimeout(timers.get(chave));
+  timers.set(chave, setTimeout(() => gravarAgora(col, chave), imediato ? 0 : 700));
+  marcaSalvo();
+}
+async function gravarAgora(col, chave) {
+  const doc = S.sujos.get(chave); if (!doc) return;
+  S.salvando++; setOnline(S.online);
+  try {
+    const salvo = await apiPost('salvar', { col, doc });
+    if (S.sujos.get(chave) === doc) { S.sujos.delete(chave); Object.assign(doc, { atualizadoEm: salvo.atualizadoEm, criadoEm: salvo.criadoEm }); }
+    setOnline(true);
+  } catch (e) {
+    if (e instanceof ErroRede || e.status >= 500) { setOnline(false); timers.set(chave, setTimeout(() => gravarAgora(col, chave), 5000)); }
+    else { S.sujos.delete(chave); toast('Não foi possível salvar: ' + e.message, 6000); }
+  }
+  S.salvando--; setOnline(S.online); marcaSalvo();
+}
+function marcaSalvo() { const el = document.getElementById('salvo'); if (el) el.textContent = S.sujos.size ? 'Salvando…' : 'Tudo salvo'; }
+function upsert(col, doc) { const arr = S.dados[col]; const i = arr.findIndex(x => x.id === doc.id); if (i >= 0) arr[i] = doc; else arr.push(doc); }
+async function remover(col, id) { S.dados[col] = S.dados[col].filter(d => d.id !== id); S.sujos.delete(col + '/' + id); try { await apiPost('excluir', { col, id }); } catch (e) { toast('Não foi possível excluir: ' + e.message); carregar(); } }
+
+/* novos ids para uma cópia (local, etapa, itens) */
+function renovarIds(local) { const l = clone(local); l.id = uid(); (l.etapas || []).forEach(e => { e.id = uid(); (e.itens || []).forEach(it => { it.id = uid(); }); }); return l; }
+function proximoNumero() { const ns = docsDe('os').map(o => parseInt(String(o.numero).replace(/\D/g, ''), 10)).filter(n => !isNaN(n)); return String(ns.length ? Math.max(...ns) + 1 : 1); }
+
+/* ---------- rotas ---------- */
+function rota() { const h = location.hash.replace(/^#\/?/, '').split('/'); return { pag: h[0] || 'os', id: h[1] || '' }; }
+window.addEventListener('hashchange', () => { S.menuLocal = false; window.scrollTo(0, 0); render(); });
+
+function render() {
+  if (!S.carregado) return;
+  const r = rota();
+  document.getElementById('abas').innerHTML = [['os', 'Ordens de serviço'], ['modelos', 'Modelos'], ['tecnicos', 'Técnicos']].map(([k, t]) => `<a href="#/${k}" class="${(r.pag === k || (k === 'os' && r.pag === 'os') || (k === 'modelos' && r.pag === 'modelo')) ? 'on' : ''}">${t}</a>`).join('');
+  let html = '';
+  if (r.pag === 'os' && r.id) html = telaOS(r.id);
+  else if (r.pag === 'modelos') html = telaModelos();
+  else if (r.pag === 'modelo' && r.id) html = telaModelo(r.id);
+  else if (r.pag === 'tecnicos') html = telaTecnicos();
+  else html = telaListaOS();
+  pintar(app, html);
+  hidratarFotos(app);
+}
+
+/* ---------- lista de OS ---------- */
+function telaListaOS() {
+  let lista = docsDe('os').slice();
+  if (S.filtro === 'abertas') lista = lista.filter(o => o.status !== 'concluida');
+  if (S.filtro === 'concluidas') lista = lista.filter(o => o.status === 'concluida');
+  const q = S.busca.trim().toLowerCase();
+  if (q) lista = lista.filter(o => [o.numero, o.titulo, o.cliente, ...(o.tecnicos || []).map(nomeTec)].join(' ').toLowerCase().includes(q));
+  lista.sort((a, b) => String(b.data || '').localeCompare(String(a.data || '')) || String(b.numero).localeCompare(String(a.numero), 'pt-BR', { numeric: true }));
+  const linhas = lista.map(o => {
+    const c = contarOS(o, id => respDe(o.id, id));
+    const pct = c.tot ? Math.round(c.feitos / c.tot * 100) : 0;
+    const st = o.status === 'concluida' ? '<span class="chip ok">Concluída</span>' : c.feitos ? '<span class="chip run">Em campo</span>' : '<span class="chip">Aberta</span>';
+    return `<tr class="lnk" data-a="abrir-os" data-id="${o.id}"><td class="mono"><b>${esc(o.numero)}</b></td><td><b>${esc(o.titulo || 'Sem título')}</b><div class="small muted">${esc(o.cliente || '')}</div></td><td>${esc(dataBR(o.data))}</td><td class="small">${esc((o.tecnicos || []).map(nomeTec).join(', ') || '—')}</td>
+      <td><div class="prog"><div class="bar"><i style="width:${c.tot ? c.ok / c.tot * 100 : 0}%"></i><i class="n" style="width:${c.tot ? c.nok / c.tot * 100 : 0}%"></i></div><span class="small mono">${c.feitos}/${c.tot}</span></div>${c.nok ? `<div class="small" style="color:var(--fail)">${c.nok} não OK</div>` : ''}</td><td>${st}</td></tr>`;
+  }).join('');
+  return `<div class="barra"><h1>Ordens de serviço</h1><span class="esp"></span><button class="btn btn-p" data-a="nova-os">+ Nova OS</button></div>
+  <div class="barra"><input type="search" placeholder="Buscar por nº, serviço, cliente ou técnico" data-f="busca" data-k="busca" value="${esc(S.busca)}" style="max-width:420px">
+  <select data-k="filtro" style="width:auto">${[['abertas', 'Abertas'], ['concluidas', 'Concluídas'], ['todas', 'Todas']].map(([v, t]) => `<option value="${v}" ${S.filtro === v ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+  <div class="card" style="overflow-x:auto">${lista.length ? `<table class="tbl"><thead><tr><th>Nº</th><th>Serviço / cliente</th><th>Data</th><th>Técnicos</th><th>Andamento</th><th>Situação</th></tr></thead><tbody>${linhas}</tbody></table>` : `<div class="empty">${docsDe('os').length ? 'Nenhuma OS neste filtro.' : 'Nenhuma OS ainda. Clique em <b>+ Nova OS</b> para montar a primeira.'}</div>`}</div>
+  ${!docsDe('tecnicos').length ? '<p class="dica" style="margin-top:16px">Comece cadastrando os técnicos na aba <b>Técnicos</b>. Eles escolhem o próprio nome no celular e veem só as OS em que estão.</p>' : ''}`;
+}
+
+/* ---------- editor de OS ---------- */
+function telaOS(id) {
+  const o = porId('os', id);
+  if (!o) return `<div class="empty">OS não encontrada. <a href="#/os">Voltar</a></div>`;
+  const c = contarOS(o, iid => respDe(o.id, iid));
+  const tecs = docsDe('tecnicos').filter(t => t.ativo !== false || (o.tecnicos || []).includes(t.id));
+  return `<div class="barra"><a href="#/os" class="btn-txt btn" style="padding-left:0">← Ordens de serviço</a><span class="esp"></span><span class="salvo" id="salvo">${S.sujos.size ? 'Salvando…' : 'Tudo salvo'}</span></div>
+  <div class="barra"><h1>OS ${esc(o.numero)}${o.titulo ? ' · ' + esc(o.titulo) : ''}</h1><span class="esp"></span>
+    <button class="btn btn-g" data-a="relatorio">Gerar relatório Word</button>
+    <button class="btn" data-a="duplicar-os">Duplicar OS</button>
+    <button class="btn btn-d" data-a="excluir-os">Excluir</button></div>
+  <div class="card" style="padding:16px">
+    <div class="grid-os">
+      <div><label class="lbl">Nº da OS</label><input type="text" data-f="o-numero" data-o="numero" value="${esc(o.numero)}"></div>
+      <div><label class="lbl">Serviço</label><input type="text" data-f="o-titulo" data-o="titulo" value="${esc(o.titulo || '')}" placeholder="Ex.: Preventiva Shopping Norte e Sul"></div>
+      <div><label class="lbl">Cliente</label><input type="text" data-f="o-cliente" data-o="cliente" value="${esc(o.cliente || '')}"></div>
+      <div><label class="lbl">Data</label><input type="date" data-f="o-data" data-o="data" value="${esc(o.data || '')}"></div>
+      <div><label class="lbl">Situação</label><select data-o="status"><option value="aberta" ${o.status !== 'concluida' ? 'selected' : ''}>Aberta</option><option value="concluida" ${o.status === 'concluida' ? 'selected' : ''}>Concluída</option></select></div>
+    </div>
+    <div style="margin-top:12px"><label class="lbl">Técnicos que vão executar</label><div class="tecs">${tecs.length ? tecs.map(t => `<button class="tec ${(o.tecnicos || []).includes(t.id) ? 'on' : ''}" data-a="tec" data-id="${t.id}">${esc(t.nome)}</button>`).join('') : '<span class="small muted">Nenhum técnico cadastrado. <a href="#/tecnicos">Cadastrar técnicos</a></span>'}</div></div>
+    <div class="small muted" style="margin-top:12px">${c.tot} itens · ${c.ok} OK · ${c.nok} não OK · ${c.tot - c.feitos} pendentes${o.concluidaEm ? ` · concluída por ${esc(o.concluidaPor || '—')} em ${esc(dataHoraBR(o.concluidaEm))}` : ''}<br>As fotos ficam guardadas automaticamente no Google Drive${S.dados.pastaUrl ? ` (<a href="${esc(S.dados.pastaUrl)}" target="_blank" rel="noopener">abrir pasta</a>)` : ''}.</div>
+  </div>
+  ${(o.locais || []).length ? '' : '<p class="dica" style="margin-top:16px">Adicione os locais da OS (ex.: Subestação 1, Gerador 1). Em cada local, crie as etapas (ex.: Limpeza antes, Testes, Limpeza pós) e os itens que o técnico vai conferir.</p>'}
+  ${(o.locais || []).map((l, i) => editorLocal(l, { os: o, idx: i, total: o.locais.length })).join('')}
+  <div class="card add-local">${S.menuLocal
+      ? `<b>Adicionar local:</b> <button class="btn btn-s" data-a="local-branco">Em branco</button>${docsDe('modelos').map(m => `<button class="btn btn-s" data-a="local-modelo" data-id="${m.id}">${esc(m.nome)}</button>`).join('')}<button class="btn-txt btn" data-a="menu-local">Cancelar</button>${docsDe('modelos').length ? '' : '<span class="small muted">Dica: salve um local como modelo para reaproveitar nas próximas OS.</span>'}`
+      : `<button class="btn btn-p" data-a="menu-local">+ Adicionar local</button><span class="small muted">Subestação, gerador, QGBT…</span>`}</div>
+  <div class="card" style="padding:16px;margin-top:18px"><label class="lbl">Considerações finais (vão para o relatório)</label><textarea data-f="o-parecer" data-o="parecer" rows="4" placeholder="Parecer técnico, pontos de atenção e recomendações. Pode deixar em branco e escrever direto no Word.">${esc(o.parecer || '')}</textarea></div>`;
+}
+
+/* editor de um local — usado na OS e nos modelos */
+function editorLocal(l, ctx) {
+  const os = ctx.os, mod = ctx.modelo;
+  const pre = l.id;
+  const etapas = l.etapas || [];
+  return `<div class="card local" data-lid="${l.id}">
+    <div class="local-cab">${mod ? `<input type="text" data-f="${pre}-nome" data-l="nome" value="${esc(l.nome)}" placeholder="Nome do modelo">` : `<input type="text" data-f="${pre}-nome" data-l="nome" value="${esc(l.nome)}" placeholder="Nome do local (ex.: Subestação 1)">`}
+      <button class="btn-txt btn btn-s" data-a="add-etapa">+ Etapa</button>
+      ${os ? `<button class="btn-txt btn btn-s" data-a="salvar-modelo">Salvar como modelo</button>
+      <button class="btn-txt btn btn-s btn-ic" data-a="local-sobe" title="Subir" ${ctx.idx === 0 ? 'disabled' : ''}>↑</button><button class="btn-txt btn btn-s btn-ic" data-a="local-desce" title="Descer" ${ctx.idx === ctx.total - 1 ? 'disabled' : ''}>↓</button>
+      <button class="btn-txt btn btn-s" data-a="local-duplicar">Duplicar</button><button class="btn-txt btn btn-s" data-a="local-excluir">Excluir</button>` : ''}
+    </div>
+    ${etapas.length ? '' : '<div class="etapa small muted">Nenhuma etapa. Clique em <b>+ Etapa</b>.</div>'}
+    ${etapas.map((e, ei) => {
+      const itens = e.itens || [];
+      const feitos = os ? itens.filter(it => { const r = respDe(os.id, it.id); return r && r.status; }).length : 0;
+      return `<div class="etapa" data-eid="${e.id}">
+        <div class="etapa-cab"><span class="num">${String(ei + 1).padStart(2, '0')}</span><input type="text" data-f="${e.id}-nome" data-e="nome" value="${esc(e.nome)}" placeholder="Nome da etapa (ex.: Limpeza antes)">
+          ${os ? `<span class="chip ${itens.length && feitos === itens.length ? 'ok' : feitos ? 'run' : ''}">${feitos}/${itens.length}</span>` : ''}
+          <button class="btn-txt btn btn-s btn-ic" data-a="etapa-sobe" title="Subir" ${ei === 0 ? 'disabled' : ''}>↑</button><button class="btn-txt btn btn-s btn-ic" data-a="etapa-desce" title="Descer" ${ei === etapas.length - 1 ? 'disabled' : ''}>↓</button>
+          <button class="btn-txt btn btn-s" data-a="etapa-duplicar">Duplicar</button><button class="btn-txt btn btn-s" data-a="etapa-excluir">Excluir</button></div>
+        ${itens.length ? `<table class="itens"><thead><tr><th>Item</th><th class="c-foto">Foto obrigatória</th><th class="c-uni">Pede valor (unidade)</th>${os ? '<th class="c-resp">Retorno do técnico</th>' : ''}<th class="c-acao"></th></tr></thead><tbody>
+        ${itens.map((it, ii) => {
+          let resp = '';
+          if (os) {
+            const r = respDe(os.id, it.id) || {}; const fs = fotosDe(os.id, it.id);
+            resp = `<div class="resp">${r.status === 'ok' ? '<span><span class="chip ok">OK</span></span>' : r.status === 'nok' ? '<span><span class="chip nok">Não OK</span></span>' : '<span class="faint">Pendente</span>'}
+              ${r.valor != null && r.valor !== '' ? `<span class="mono">${esc(String(r.valor).replace('.', ','))} ${esc(it.unid || '')}</span>` : ''}
+              ${r.obs ? `<span class="obs">${esc(r.obs)}</span>` : ''}
+              ${fs.length ? `<span class="thumbs">${fs.map(f => `<img data-foto="${f.id}" ${FOTOS.has(f.id) ? `src="${FOTOS.get(f.id)}"` : ''} alt="Foto de ${esc(it.nome)}" data-a="lupa">`).join('')}</span>` : ''}
+              ${r.em ? `<span class="faint">${esc(r.por || '')} · ${esc(dataHoraBR(r.em))}</span>` : ''}</div>`;
+          }
+          return `<tr data-iid="${it.id}"><td><input type="text" data-f="${it.id}-nome" data-i="nome" value="${esc(it.nome)}"></td>
+            <td class="c-foto"><input type="checkbox" data-i="fotoObrig" ${it.fotoObrig ? 'checked' : ''} aria-label="Foto obrigatória" style="width:20px;height:20px"></td>
+            <td class="c-uni"><input type="text" data-f="${it.id}-unid" data-i="unid" value="${esc(it.unid || '')}" placeholder="—"></td>
+            ${os ? `<td class="c-resp">${resp}</td>` : ''}
+            <td class="c-acao"><button class="btn-txt btn btn-s btn-ic" data-a="item-sobe" title="Subir" ${ii === 0 ? 'disabled' : ''}>↑</button><button class="btn-txt btn btn-s btn-ic" data-a="item-desce" title="Descer" ${ii === itens.length - 1 ? 'disabled' : ''}>↓</button><button class="btn-txt btn btn-s btn-ic" data-a="item-excluir" title="Excluir item" style="color:var(--fail)">✕</button></td></tr>`;
+        }).join('')}</tbody></table>` : ''}
+        <div class="novo-item"><textarea data-f="${e.id}-novo" data-novo="1" data-rasc="1" placeholder="Novo item — Enter adiciona. Pode colar vários, um por linha (Trafo 1, Trafo 2, Mufla…)"></textarea><button class="btn btn-s" data-a="add-item">Adicionar</button></div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+/* ---------- modelos ---------- */
+function telaModelos() {
+  const ms = docsDe('modelos').slice().sort((a, b) => String(a.nome).localeCompare(String(b.nome), 'pt-BR'));
+  return `<div class="barra"><h1>Modelos de local</h1><span class="esp"></span><button class="btn btn-p" data-a="novo-modelo">+ Novo modelo</button></div>
+  <p class="dica">Um modelo é um local pronto, com etapas e itens (ex.: "Subestação com 2 trafos", "Gerador"). Na OS, use <b>+ Adicionar local</b> e escolha o modelo. Depois é só ajustar o nome e os itens.</p>
+  ${ms.length ? ms.map(m => { const n = (m.etapas || []).reduce((a, e) => a + (e.itens || []).length, 0); return `<div class="card mod-card" data-a="abrir-modelo" data-id="${m.id}"><div style="flex:1"><b>${esc(m.nome || 'Sem nome')}</b><div class="small muted">${(m.etapas || []).length} etapas · ${n} itens · ${esc((m.etapas || []).map(e => e.nome).join(' · '))}</div></div><span class="faint">›</span></div>`; }).join('') : '<div class="card empty">Nenhum modelo ainda.</div>'}`;
+}
+function telaModelo(id) {
+  const m = porId('modelos', id); if (!m) return `<div class="empty">Modelo não encontrado. <a href="#/modelos">Voltar</a></div>`;
+  return `<div class="barra"><a href="#/modelos" class="btn-txt btn" style="padding-left:0">← Modelos</a><span class="esp"></span><span class="salvo" id="salvo">${S.sujos.size ? 'Salvando…' : 'Tudo salvo'}</span><button class="btn btn-d" data-a="excluir-modelo">Excluir modelo</button></div>
+  ${editorLocal(m, { modelo: m })}`;
+}
+
+/* ---------- técnicos ---------- */
+function telaTecnicos() {
+  const ts = docsDe('tecnicos').slice().sort((a, b) => String(a.nome).localeCompare(String(b.nome), 'pt-BR'));
+  return `<div class="barra"><h1>Técnicos</h1></div>
+  <p class="dica">Mande o link abaixo para os técnicos (WhatsApp). No celular, o técnico abre o link, toca no próprio nome e passa a ver só as OS em que foi incluído.</p>
+  <div class="card" style="padding:14px 16px;margin-bottom:14px"><label class="lbl">Link do app para os técnicos</label><div style="display:flex;gap:8px;flex-wrap:wrap"><input type="text" readonly value="${esc(linkCampo())}" style="flex:1;min-width:240px;font-family:var(--mono);font-size:13px"><button class="btn" data-a="copiar-link">Copiar</button><a class="btn btn-g" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent('App de OS da Cogera. Abra no celular e adicione à tela inicial: ' + linkCampo())}">Enviar no WhatsApp</a></div></div>
+  <div class="card" style="padding:8px 16px">
+  ${ts.map(t => `<div data-tid="${t.id}" style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--surface-3)"><input type="text" data-f="${t.id}-tnome" data-t="nome" value="${esc(t.nome)}" style="flex:1"><label class="small" style="display:flex;gap:6px;align-items:center;white-space:nowrap"><input type="checkbox" data-t="ativo" ${t.ativo !== false ? 'checked' : ''}> ativo</label><button class="btn-txt btn btn-s" data-a="excluir-tec" style="color:var(--fail)">Excluir</button></div>`).join('') || '<div class="empty">Nenhum técnico cadastrado.</div>'}
+  <div style="display:flex;gap:10px;padding:12px 0"><input type="text" id="novo-tec" data-f="novo-tec" data-rasc="1" placeholder="Nome do técnico (ex.: João Silva)"><button class="btn btn-p" data-a="add-tec">Adicionar</button></div></div>`;
+}
+
+function linkCampo() { const base = location.href.split('#')[0].split('?')[0].replace(/matriz\.html$/, ''); return base + '?k=' + encodeURIComponent(S.dados.chaveCampo || ''); }
+
+/* ---------- localizar o que foi clicado/editado ---------- */
+function alvo(el) {
+  const r = rota();
+  const dono = r.pag === 'modelo' ? { col: 'modelos', doc: porId('modelos', r.id) } : { col: 'os', doc: porId('os', r.id) };
+  const lidEl = el.closest('[data-lid]'), eidEl = el.closest('[data-eid]'), iidEl = el.closest('[data-iid]');
+  let local = null, etapa = null, item = null;
+  if (dono.doc && lidEl) local = dono.col === 'modelos' ? dono.doc : (dono.doc.locais || []).find(l => l.id === lidEl.dataset.lid);
+  if (local && eidEl) etapa = (local.etapas || []).find(e => e.id === eidEl.dataset.eid);
+  if (etapa && iidEl) item = (etapa.itens || []).find(i => i.id === iidEl.dataset.iid);
+  return Object.assign(dono, { local, etapa, item });
+}
+function mover(arr, i, d) { const j = i + d; if (j < 0 || j >= arr.length) return; [arr[i], arr[j]] = [arr[j], arr[i]]; }
+
+/* ---------- edição de campos ---------- */
+app.addEventListener('input', e => {
+  const el = e.target;
+  if (el.dataset.k === 'busca') { S.busca = el.value; render(); return; }
+  if (el.dataset.novo) return;
+  const val = el.type === 'checkbox' ? el.checked : el.value;
+  const t = el.closest('[data-tid]');
+  if (t && el.dataset.t) { const tec = porId('tecnicos', t.dataset.tid); if (tec) { tec[el.dataset.t] = val; salvar('tecnicos', tec); } return; }
+  const a = alvo(el); if (!a.doc) return;
+  if (el.dataset.o) { a.doc[el.dataset.o] = val; if (el.dataset.o === 'status' && val === 'aberta') { a.doc.concluidaEm = null; a.doc.concluidaPor = null; } salvar(a.col, a.doc, el.tagName === 'SELECT'); if (el.tagName === 'SELECT') render(); return; }
+  if (el.dataset.i && a.item) { a.item[el.dataset.i] = val; salvar(a.col, a.doc, el.type === 'checkbox'); return; }
+  if (el.dataset.e && a.etapa) { a.etapa[el.dataset.e] = val; salvar(a.col, a.doc); return; }
+  if (el.dataset.l && a.local) { a.local[el.dataset.l] = val; salvar(a.col, a.doc); return; }
+});
+app.addEventListener('change', e => {
+  const el = e.target;
+  if (el.dataset.k === 'filtro') { S.filtro = el.value; lsSet('osc.m.filtro', S.filtro); render(); }
+  if (el.dataset.t === 'ativo') render();
+});
+app.addEventListener('keydown', e => {
+  if (e.target.dataset.novo && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addItens(e.target); }
+  if (e.target.id === 'novo-tec' && e.key === 'Enter') { e.preventDefault(); addTec(); }
+});
+app.addEventListener('paste', e => {
+  const el = e.target; if (!el.dataset.novo) return;
+  const txt = (e.clipboardData || window.clipboardData).getData('text');
+  if (/\n/.test(txt.trim())) { e.preventDefault(); el.value = (el.value ? el.value + '\n' : '') + txt; addItens(el); }
+});
+function addItens(el) {
+  const a = alvo(el); if (!a.etapa) return;
+  const nomes = el.value.split(/\r?\n/).map(s => s.replace(/^[\s\-•*·\d.)]+(?=\S)/, '').trim()).filter(Boolean);
+  if (!nomes.length) return;
+  a.etapa.itens = a.etapa.itens || [];
+  nomes.forEach(n => a.etapa.itens.push({ id: uid(), nome: n, fotoObrig: false, unid: '' }));
+  el.value = ''; salvar(a.col, a.doc, true); render();
+}
+function addTec() {
+  const el = document.getElementById('novo-tec'); const nome = el.value.trim(); if (!nome) return;
+  const t = { id: uid(), nome, ativo: true }; upsert('tecnicos', t); salvar('tecnicos', t, true); el.value = ''; render();
+}
+
+/* ---------- ações ---------- */
+app.addEventListener('click', async e => {
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  const ac = b.dataset.a; const a = alvo(b);
+  const salvaRender = () => { salvar(a.col, a.doc, true); render(); };
+  switch (ac) {
+    case 'abrir-os': location.hash = '#/os/' + b.dataset.id; break;
+    case 'nova-os': {
+      const o = { id: uid(), numero: proximoNumero(), titulo: '', cliente: '', data: hoje(), tecnicos: [], status: 'aberta', locais: [], parecer: '' };
+      upsert('os', o); salvar('os', o, true); location.hash = '#/os/' + o.id; break;
+    }
+    case 'tec': { const l = a.doc.tecnicos = a.doc.tecnicos || []; const i = l.indexOf(b.dataset.id); if (i >= 0) l.splice(i, 1); else l.push(b.dataset.id); salvaRender(); break; }
+    case 'menu-local': S.menuLocal = !S.menuLocal; render(); break;
+    case 'local-branco': { const n = (a.doc.locais || []).length + 1; (a.doc.locais = a.doc.locais || []).push({ id: uid(), nome: `Local ${n}`, etapas: [{ id: uid(), nome: 'Etapa 1', itens: [] }] }); S.menuLocal = false; salvaRender(); break; }
+    case 'local-modelo': { const m = porId('modelos', b.dataset.id); if (!m) break; const l = renovarIds({ nome: m.nome, etapas: m.etapas || [] }); (a.doc.locais = a.doc.locais || []).push(l); S.menuLocal = false; salvaRender(); toast(`Local "${m.nome}" adicionado. Ajuste o nome se precisar.`); break; }
+    case 'add-etapa': { (a.local.etapas = a.local.etapas || []).push({ id: uid(), nome: '', itens: [] }); salvaRender(); const ult = a.local.etapas[a.local.etapas.length - 1]; setTimeout(() => { const n = document.querySelector(`[data-f="${ult.id}-nome"]`); n && n.focus(); }, 0); break; }
+    case 'salvar-modelo': {
+      const m = Object.assign(renovarIds(a.local), {}); m.nome = a.local.nome; upsert('modelos', m); salvar('modelos', m, true);
+      toast(`Modelo "${m.nome}" salvo. Ele aparece em "+ Adicionar local".`); break;
+    }
+    case 'local-sobe': case 'local-desce': { const i = a.doc.locais.indexOf(a.local); mover(a.doc.locais, i, ac === 'local-sobe' ? -1 : 1); salvaRender(); break; }
+    case 'local-duplicar': { const i = a.doc.locais.indexOf(a.local); const c = renovarIds(a.local); c.nome = a.local.nome + ' (cópia)'; a.doc.locais.splice(i + 1, 0, c); salvaRender(); break; }
+    case 'local-excluir': {
+      if (await perguntar(`Excluir o local "${a.local.nome}"?`, 'As etapas e os itens deste local saem da OS. As fotos já enviadas continuam na pasta do servidor.', [{ txt: 'Cancelar', v: false }, { txt: 'Excluir', v: true, cls: 'btn-d' }])) { a.doc.locais = a.doc.locais.filter(l => l !== a.local); salvaRender(); }
+      break;
+    }
+    case 'etapa-sobe': case 'etapa-desce': { const i = a.local.etapas.indexOf(a.etapa); mover(a.local.etapas, i, ac === 'etapa-sobe' ? -1 : 1); salvaRender(); break; }
+    case 'etapa-duplicar': { const i = a.local.etapas.indexOf(a.etapa); const c = clone(a.etapa); c.id = uid(); c.nome = a.etapa.nome ? a.etapa.nome + ' (cópia)' : ''; (c.itens || []).forEach(it => { it.id = uid(); }); a.local.etapas.splice(i + 1, 0, c); salvaRender(); break; }
+    case 'etapa-excluir': {
+      if (await perguntar(`Excluir a etapa "${a.etapa.nome || 'sem nome'}"?`, `${(a.etapa.itens || []).length} itens saem da OS.`, [{ txt: 'Cancelar', v: false }, { txt: 'Excluir', v: true, cls: 'btn-d' }])) { a.local.etapas = a.local.etapas.filter(x => x !== a.etapa); salvaRender(); }
+      break;
+    }
+    case 'add-item': { const ta = b.parentElement.querySelector('textarea'); addItens(ta); break; }
+    case 'item-sobe': case 'item-desce': { const i = a.etapa.itens.indexOf(a.item); mover(a.etapa.itens, i, ac === 'item-sobe' ? -1 : 1); salvaRender(); break; }
+    case 'item-excluir': {
+      const tem = a.col === 'os' && (respDe(a.doc.id, a.item.id) || fotosDe(a.doc.id, a.item.id).length);
+      if (!tem || await perguntar(`Excluir "${a.item.nome}"?`, 'O técnico já registrou algo neste item. O registro sai do relatório (as fotos continuam na pasta).', [{ txt: 'Cancelar', v: false }, { txt: 'Excluir', v: true, cls: 'btn-d' }])) { a.etapa.itens = a.etapa.itens.filter(x => x !== a.item); salvaRender(); }
+      break;
+    }
+    case 'lupa': { const id = b.dataset.foto; const o = document.createElement('div'); o.className = 'lupa'; o.innerHTML = `<img data-foto="${esc(id)}" ${FOTOS.has(id) ? `src="${FOTOS.get(id)}"` : ''} alt="">`; o.onclick = () => o.remove(); document.body.appendChild(o); hidratarFotos(o); break; }
+    case 'relatorio': await baixarRelatorio(a.doc, b); break;
+    case 'duplicar-os': {
+      const o = clone(a.doc); o.id = uid(); o.numero = proximoNumero(); o.status = 'aberta'; o.concluidaEm = null; o.concluidaPor = null; o.data = hoje(); o.parecer = ''; delete o.criadoEm; delete o.atualizadoEm;
+      o.locais = (o.locais || []).map(l => { const c = renovarIds(l); c.nome = l.nome; return c; });
+      upsert('os', o); salvar('os', o, true); location.hash = '#/os/' + o.id; toast('OS duplicada, sem as respostas. Confira número, data e técnicos.'); break;
+    }
+    case 'excluir-os': {
+      if (await perguntar(`Excluir a OS ${a.doc.numero}?`, 'A OS some da matriz e dos celulares. As fotos e relatórios já gravados continuam na pasta do servidor.', [{ txt: 'Cancelar', v: false }, { txt: 'Excluir OS', v: true, cls: 'btn-d' }])) { await remover('os', a.doc.id); location.hash = '#/os'; }
+      break;
+    }
+    case 'novo-modelo': { const m = { id: uid(), nome: 'Novo modelo', etapas: [{ id: uid(), nome: 'Limpeza antes', itens: [] }] }; upsert('modelos', m); salvar('modelos', m, true); location.hash = '#/modelo/' + m.id; break; }
+    case 'abrir-modelo': location.hash = '#/modelo/' + b.dataset.id; break;
+    case 'excluir-modelo': if (await perguntar(`Excluir o modelo "${a.doc.nome}"?`, 'As OS que já usaram este modelo não mudam.', [{ txt: 'Cancelar', v: false }, { txt: 'Excluir', v: true, cls: 'btn-d' }])) { await remover('modelos', a.doc.id); location.hash = '#/modelos'; } break;
+    case 'add-tec': addTec(); break;
+    case 'copiar-link': { try { await navigator.clipboard.writeText(linkCampo()); toast('Link copiado.'); } catch (e) { const i = b.parentElement.querySelector('input'); i.select(); document.execCommand('copy'); toast('Link copiado.'); } break; }
+    case 'excluir-tec': {
+      const t = porId('tecnicos', b.closest('[data-tid]').dataset.tid);
+      if (t && await perguntar(`Excluir ${t.nome}?`, 'Se ele está em alguma OS, prefira desmarcar "ativo": o nome continua no histórico.', [{ txt: 'Cancelar', v: false }, { txt: 'Excluir', v: true, cls: 'btn-d' }])) { await remover('tecnicos', t.id); render(); }
+      break;
+    }
+  }
+});
+
+async function baixarRelatorio(os, botao) {
+  for (const [chave] of S.sujos) { const col = chave.split('/')[0]; clearTimeout(timers.get(chave)); await gravarAgora(col, chave); }
+  const txt = botao.textContent; botao.disabled = true;
+  try {
+    const d = await apiGet('tudo');
+    const o = d.os.find(x => x.id === os.id) || os;
+    const fotos = d.fotos.filter(f => f.osId === o.id);
+    let n = 0; botao.textContent = fotos.length ? `Baixando fotos 0/${fotos.length}…` : 'Gerando relatório…';
+    const blob = await gerarRelatorioDocx({
+      os: o, respostas: d.respostas.filter(r => r.osId === o.id), fotos, tecnicos: d.tecnicos,
+      lerFoto: async f => { const b = await fotoBlob(f.id); n++; botao.textContent = `Baixando fotos ${n}/${fotos.length}…`; return new Uint8Array(await b.arrayBuffer()); },
+      lerModelo: async nome => { const r = await fetch('modelo-relatorio/' + nome); if (!r.ok) return null; return new Uint8Array(await r.arrayBuffer()); },
+      comCapa: CFG.relatorioComCapa !== false, empresa: CFG.empresa || 'Cogera Energia',
+    });
+    const nome = `Relatório OS ${o.numero || ''}${o.titulo ? ' - ' + o.titulo : ''}`.replace(/[<>:"/\\|?*]/g, '-').slice(0, 110) + '.docx';
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nome; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+    toast('Relatório baixado. Abra no Word para revisar.', 5000);
+  } catch (e) { toast('Não foi possível gerar o relatório: ' + e.message, 6000); }
+  botao.disabled = false; botao.textContent = txt;
+}
+
+/* ---------- início ---------- */
+CHAVE = lsGet('osc.m.k', '') || '';
+carregar();
+/* confere mudanças a cada 8 segundos (técnicos enviando) */
+setInterval(async () => {
+  if (!API_OK || !CHAVE || !S.carregado || document.hidden) return;
+  try { const v = await apiGet('versao'); setOnline(true); if (v.versao !== S.versao && !S.sujos.size) carregar(); } catch (e) { setOnline(false); }
+}, 8000);
+window.addEventListener('focus', () => { if (S.carregado && !S.sujos.size) carregar(); });
+document.getElementById('sair').onclick = async () => { if (await perguntar('Sair da matriz?', 'Para entrar de novo neste computador, será preciso colar a chave do escritório.', [{ txt: 'Cancelar', v: false }, { txt: 'Sair', v: true, cls: 'btn-p' }])) { lsSet('osc.m.k', ''); location.reload(); } };
+window.addEventListener('beforeunload', e => { if (S.sujos.size) { e.preventDefault(); e.returnValue = ''; } });
+</script>
+</body>
+</html>
