@@ -93,4 +93,4 @@ function contarOS(os, respDe) {
   for (const l of os.locais || []) for (const e of l.etapas || []) for (const it of e.itens || []) { tot++; const r = respDe(it.id); if (r && r.status === 'ok') ok++; else if (r && r.status === 'nok') nok++; }
   return { tot, ok, nok, feitos: ok + nok };
 }
-const TELA_SEM_CONFIG = `<div class="card empty" style="margin-top:20px"><b>Falta configurar o endereço do Apps Script.</b><br>Abra o arquivo <span class="mono">config.js</span>, cole a URL que termina em <span class="mono">/exec</span> e publique de novo.</div>`;
+const TELA_SEM_CONFIG = `<div class="card empty" style="margin-top:20px"><b>Falta configurar o endereço do Apps Script.</b><br>Abra o arquivo <span class="mono">config.js</span>, cole a URL que termina em <span class="mono">/exec</span> e publique de novo.<p class="small" style="margin:14px 0 0;word-break:break-all">O <span class="mono">config.js</span> que chegou aqui tem: <span class="mono">${esc(CFG.api || '(vazio — o arquivo não foi encontrado ou está com erro)')}</span></p></div>`;

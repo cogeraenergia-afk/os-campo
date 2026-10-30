@@ -168,6 +168,7 @@ async function enviarFoto(f) {
   return doc;
 }
 async function sincronizar() {
+  if (!API_OK || !CHAVE) { render(); return; }
   if (T.enviando) { T.denovo = true; return; }
   T.enviando = true; mostrarAviso();
   try {
@@ -249,7 +250,7 @@ function rodape(html) { const r = document.getElementById('rodape'); r.hidden = 
 
 function render() {
   mostrarAviso();
-  if (!API_OK) { topo(); rodape(''); return pintar(app, TELA_SEM_CONFIG); }
+  if (!API_OK) { document.getElementById('aviso').hidden = true; topo(); rodape(''); return pintar(app, TELA_SEM_CONFIG); }
   if (!CHAVE || T.semAcesso) { topo(); rodape(''); return pintar(app, `<div class="card empty" style="margin-top:20px"><b>Abra o app pelo link enviado pelo escritório.</b><br>${T.semAcesso ? 'O link guardado neste celular não vale mais. Peça o link novo.' : 'Esse link já traz o acesso. Depois é só adicionar à tela inicial.'}</div>`); }
   if (!T.tec) return telaQuem();
   const r = rota();
